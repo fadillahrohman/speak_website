@@ -21,7 +21,7 @@ const VerificationSuccess = () => {
 
       try {
         const response = await fetch(
-          `http://localhost:3000/auth/validate-success-token?token=${token}`
+          `http://localhost:3003/auth/validate-success-token?token=${token}`
         );
         const data = await response.json();
 
@@ -64,7 +64,7 @@ const VerificationSuccess = () => {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
         <div className="p-8 bg-white rounded shadow-md text-center">
-          <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <div className="animate-spin h-8 w-8 border-4 border-[#AC1754] border-t-transparent rounded-full mx-auto mb-4"></div>
           <p>Memvalidasi...</p>
         </div>
       </div>
@@ -98,7 +98,7 @@ const VerificationSuccess = () => {
       {/* Image for tablet & mobile */}
       <img
         src="/images/verification-email.svg"
-        alt="Verification"
+        alt="Verification Illustration Mobile"
         className="block md:hidden mx-auto w-auto h-[50vh] object-contain"
       />
     </div>

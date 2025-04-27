@@ -7,6 +7,9 @@ import VerificationSuccess from "./pages/VerificationSuccess"
 import ForgotPassword from "./pages/ForgotPassword"
 import ResendEmail from "./pages/ResendEmail"
 import RedirectIfAuthenticated from "./components/RedirectIfAuthenticated"
+import Testing from "./pages/Testing"
+import Footer from "./components/Footer"
+import Report from "./pages/Report"
 
 
 function App() {
@@ -21,8 +24,11 @@ function App() {
       <Route path="/verification-success" element={<RedirectIfAuthenticated><VerificationSuccess/></RedirectIfAuthenticated>}></Route>
       <Route path="/forgot-password" element={<RedirectIfAuthenticated><ForgotPassword/></RedirectIfAuthenticated>}></Route>
       <Route path="/resend-verification" element={<RedirectIfAuthenticated><ResendEmail/></RedirectIfAuthenticated>}></Route>
+      <Route path="/report" element={<Report/>}></Route>
+      <Route path="/testing" element={<Testing/>}></Route>
     </Routes>
     </BrowserRouter>
+    {/* <Footer/> */}
     </>
   )
 }

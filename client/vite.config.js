@@ -8,7 +8,12 @@ export default defineConfig({
     tailwindcss(),],
   server: {
     proxy: {
-      '/api' : 'http://localhost:3000' 
+      // '/api' : 'http://localhost:3003' 
+      '/api': {
+        target: 'https://speak.rynn.fun',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
     }
   }  
 })

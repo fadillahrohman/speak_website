@@ -1,4 +1,3 @@
-// components/RedirectIfAuthenticated.jsx
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -9,7 +8,7 @@ export default function RedirectIfAuthenticated({ children }) {
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/auth/verify", {
+        const response = await axios.get("/api/auth/verify", {
           withCredentials: true,
         });
 

@@ -17,7 +17,7 @@ const Navbar = () => {
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/auth/verify", {
+        const response = await axios.get("/api/auth/verify", {
           withCredentials: true,
         });
 
@@ -41,7 +41,7 @@ const Navbar = () => {
     try {
       // Call the logout endpoint to delete cookies on the server
       await axios.post(
-        "http://localhost:3000/auth/logout",
+        "/api/auth/logout",
         {},
         {
           withCredentials: true,
