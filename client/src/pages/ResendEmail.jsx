@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { usePageLoading } from "../hooks/usePageLoading";
 import RoundedButton from "../components/RoundedButton";
 import LoadingScreen from "../components/LoadingScreen";
+import axios from "axios";
 
 function ResendEmail() {
   // Page Title
@@ -50,14 +51,14 @@ function ResendEmail() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/auth/resend-verification", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: values.email }),
-      });
-
+      const response = await axios.post(
+        "/api/auth/resend-verification",
+        { email: values.email },
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
       const data = await response.json();
 
       if (response.ok) {

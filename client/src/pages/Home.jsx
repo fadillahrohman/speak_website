@@ -203,6 +203,7 @@ const Home = () => {
                 </div>
               </div>
             </Link>
+         
             {/* Card 3 */}
             <Link to="/guide">
               <div className="bg-pink-200 hover:bg-pink-300 transition-colors rounded-lg overflow-hidden shadow-md relative">

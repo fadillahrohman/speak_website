@@ -10,6 +10,7 @@ import RedirectIfAuthenticated from "./components/RedirectIfAuthenticated"
 import Testing from "./pages/Testing"
 import Footer from "./components/Footer"
 import Report from "./pages/Report"
+import ObserverProvider from "./components/ObserverProvider"
 
 
 function App() {
@@ -18,7 +19,7 @@ function App() {
     <BrowserRouter>
     <Navbar/>
     <Routes>
-      <Route path="/" element={<Home/>}></Route>
+      <Route path="/" element={<ObserverProvider><Home/></ObserverProvider>}></Route>
       <Route path="/login" element={<RedirectIfAuthenticated><Login/></RedirectIfAuthenticated>}></Route>
       <Route path="/register" element={<RedirectIfAuthenticated><Register/></RedirectIfAuthenticated>}></Route>
       <Route path="/verification-success" element={<RedirectIfAuthenticated><VerificationSuccess/></RedirectIfAuthenticated>}></Route>

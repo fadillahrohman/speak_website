@@ -21,7 +21,7 @@ const VerificationSuccess = () => {
 
       try {
         const response = await fetch(
-          `http://localhost:3003/auth/validate-success-token?token=${token}`
+          `/api/auth/validate-success-token?token=${token}`
         );
         const data = await response.json();
 

@@ -1,16 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import { BadgeCheck, Option, Scaling, ChevronDown, ChevronUp, OctagonX } from "lucide-react";
+import {
+  BadgeCheck,
+  Option,
+  Scaling,
+  ChevronDown,
+  ChevronUp,
+  OctagonX,
+} from "lucide-react";
 
 // Make sure axios always send credentials (cookie JWT/session)
 axios.defaults.withCredentials = true;
 
 const Report = () => {
   // Page title
-    useEffect(() => {
-      document.title = "Lapor dengan SPEAK";
-    });
+  useEffect(() => {
+    document.title = "Lapor dengan SPEAK";
+  });
 
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
@@ -23,7 +30,7 @@ const Report = () => {
     date: "",
     description: "",
   });
-  
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [showError, setShowError] = useState(false);
@@ -71,7 +78,7 @@ const Report = () => {
     const file = e.target.files[0];
     if (file) {
       setSelectedFile(file);
-      
+
       // Create preview URL for the image
       const fileReader = new FileReader();
       fileReader.onload = () => {
@@ -123,13 +130,14 @@ const Report = () => {
       formData.append("title", values.title);
       formData.append("description", values.description);
       formData.append("date", new Date(values.date).toISOString());
-      
+
       if (selectedFile) {
         formData.append("proof", selectedFile);
       }
 
       await axios.post("/api/reports", formData, {
         headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
       });
 
       setSuccessMessage("Laporan berhasil dikirim!");
@@ -181,14 +189,14 @@ const Report = () => {
       )}
       <div className="grid grid-cols-1 md:grid-cols-12 border border-gray-300">
         <div className="bg-[#AC1754] md:col-span-4 p-10 text-white relative">
-          <img src="/images/speak-report.svg" alt="" />
+          <img src="/images/speak-report.svg" alt="Speak Report Illustration" />
           <p className="mt-3 text-sm font-bold leading-7 font-regular uppercase">
             Saatnya
           </p>
-          <h3 className="text-3xl leading-normal font-extrabold tracking-tight">
+          <h3 className="leading-normal font-extrabold tracking-tight text-xl lg:text-3xl">
             #BERANI <span className="bg-white text-[#AC1754] px-2">Lapor!</span>
           </h3>
-          <p className="mt-4 leading-7 text-gray-200">
+          <p className="mt-4 leading-7 text-gray-200 text-sm sm:text-md lg:text-base">
             Melapor langkah berani untuk memperjuangkan keadilan dan menciptakan
             lingkungan yang lebih aman bagi semua orang.
           </p>
@@ -224,10 +232,7 @@ const Report = () => {
           </div>
           <div className="flex flex-wrap -mx-3 mb-6">
             <div className="w-full px-3">
-              <label
-                className="uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 flex gap-2 items-center"
-                htmlFor="grid-password"
-              >
+              <label className="uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 flex gap-2 items-center">
                 Unggah Bukti <Option size={20} color="#fcc00a" />
               </label>
               {/* Toggle button for file upload */}
@@ -236,9 +241,17 @@ const Report = () => {
                 onClick={toggleFileInput}
                 className="mb-3 flex items-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded transition-all duration-300 cursor-pointer"
               >
-                <img src="/images/icons/upload-icon.svg" className="w-10 h-10" alt="" />
+                <img
+                  src="/images/icons/upload-icon.svg"
+                  className="w-10 h-10"
+                  alt=""
+                />
                 {showFileInput ? "Tutup Pilihan File" : "Pilih File"}
-                {showFileInput ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                {showFileInput ? (
+                  <ChevronUp size={16} />
+                ) : (
+                  <ChevronDown size={16} />
+                )}
               </button>
               <p className="text-gray-400 text-sm mb-1 italic">Opsional</p>
               {/* Hidden file input */}
@@ -250,18 +263,22 @@ const Report = () => {
                 onChange={handleFileChange}
               />
               {/* Animated custom file upload area */}
-              <div 
+              <div
                 className={`transition-all duration-500 ease-in-out overflow-hidden ${
                   showFileInput ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
                 }`}
               >
                 {!previewUrl ? (
-                  <div 
+                  <div
                     onClick={handleButtonClick}
                     className="cursor-pointer border-2 border-dashed border-gray-300 rounded-lg py-8 px-4 flex flex-col items-center justify-center mb-3"
                   >
                     <div className="mb-4">
-                      <img src="/images/icons/file-icon.svg" className="w-20 h-20" alt="" />
+                      <img
+                        src="/images/icons/file-icon.svg"
+                        className="w-20 h-20"
+                        alt=""
+                      />
                     </div>
                     <button
                       type="button"
@@ -277,10 +294,10 @@ const Report = () => {
                   <div className="relative mb-3">
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
                       <div className="flex flex-col items-center">
-                        <img 
-                          src={previewUrl} 
-                          alt="Preview" 
-                          className="max-h-64 rounded" 
+                        <img
+                          src={previewUrl}
+                          alt="Preview"
+                          className="max-h-64 rounded"
                         />
                         <p className="text-sm text-gray-600 mt-2">
                           {selectedFile && selectedFile.name}
@@ -324,7 +341,10 @@ const Report = () => {
             </div>
             <div className="flex flex-col md:flex-row justify-between w-full px-3 gap-3">
               <Link to="#">
-                <button type="button" className="w-full md:w-auto bg-[#AC1754] hover:bg-[#A4144F] text-white text-xs p-2 rounded flex items-center justify-center cursor-pointer">
+                <button
+                  type="button"
+                  className="w-full md:w-auto bg-[#AC1754] hover:bg-[#A4144F] text-white text-xs p-2 rounded flex items-center justify-center cursor-pointer"
+                >
                   Petunjuk Laporan <Scaling size={15} />
                 </button>
               </Link>
