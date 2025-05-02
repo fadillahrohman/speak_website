@@ -8,7 +8,7 @@ import {
   ListRestart,
 } from "lucide-react";
 
-// Simple encryption function using XOR with key
+// Save encryption function using XOR with key
 const encryptData = (data, secretKey) => {
   try {
     const jsonString = JSON.stringify(data);
@@ -85,7 +85,7 @@ const ChatWidget = () => {
     },
   ];
 
-  // Load saved messages from localStorage saat komponen dimuat
+  // Load saved messages from localStorage
   useEffect(() => {
     const loadSavedMessages = () => {
       try {
