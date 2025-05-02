@@ -349,7 +349,7 @@ const Home = () => {
                           Iqro Negoro
                         </div>
                         <div className="text-base font-medium text-indigo-200">
-                          Mas-mas Gercep Ngelapor Kalo Ada Kejadian
+                          Mas-mas Gercep Ngelapor
                         </div>
                       </div>
                     </div>
