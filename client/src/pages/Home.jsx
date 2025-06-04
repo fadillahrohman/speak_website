@@ -30,11 +30,11 @@ const Home = () => {
 
         // if the user is logged in, because there is no endpoint to fetch status data without logging in
         const response = await counselingAPI.countCounglings();
-        const reportsData = response.data?.data || [];
-        const closedReports = reportsData.filter(
+        const countDatas = response.data?.data || [];
+        const closedCounselings = countDatas.filter(
           (counseling) => counseling.status === "closed"
         );
-        setClosedReportsCount(closedReports.length);
+        setClosedReportsCount(closedCounselings.length);
       } catch (error) {
         console.error("Error fetching reports:", error);
         setClosedReportsCount(0);
