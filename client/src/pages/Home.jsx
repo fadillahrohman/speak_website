@@ -30,7 +30,7 @@ const Home = () => {
 
         // if the user is logged in, because there is no endpoint to fetch status data without logging in
         const response = await counselingAPI.countCounglings();
-        response.data.total || [];
+        response.data.total || 0;
         
         
       } catch (error) {

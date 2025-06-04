@@ -20,7 +20,7 @@ const ContentReportDetail = ({ report }) => {
     }
 
     // Add the base URL
-    return `https://speak.rynn.fun/images/${imageSource}`;
+    return `https://apispeak.rynn.fun/images/${imageSource}`;
   };
 
   return (
