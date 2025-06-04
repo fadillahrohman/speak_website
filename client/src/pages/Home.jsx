@@ -28,11 +28,8 @@ const Home = () => {
         // for testing
         // setClosedReportsCount(318);
 
-        // if the user is logged in, because there is no endpoint to fetch status data without logging in
         const response = await counselingAPI.countCounglings();
-        response.data.total || 0;
-        
-        
+        setClosedReportsCount(response.data.total || 0);
       } catch (error) {
         console.error("Error fetching reports:", error);
         setClosedReportsCount(0);
