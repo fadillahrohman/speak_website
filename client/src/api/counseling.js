@@ -5,6 +5,10 @@ const counselingAPI = {
     return await axios.get("/api/counselings");
   },
 
+  countCounglings: async () => {
+    return await axios.get("/api/counselings/count");
+  },
+
   createCounseling: async (formData) => {
     return await axios.post("/api/counselings", formData, {
       headers: {

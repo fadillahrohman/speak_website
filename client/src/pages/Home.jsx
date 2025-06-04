@@ -13,8 +13,7 @@ import {
   Download,
 } from "lucide-react";
 import ChatWidget from "../components/ChatWidget";
-
-// import reportAPI from "../api/report";
+import counselingAPI from "../api/counseling";
 
 const Home = () => {
   const [closedReportsCount, setClosedReportsCount] = useState(0);
@@ -27,13 +26,15 @@ const Home = () => {
     const fetchClosedReportsCount = async () => {
       try {
         // for testing
-        setClosedReportsCount(318);
+        // setClosedReportsCount(318);
 
         // if the user is logged in, because there is no endpoint to fetch status data without logging in
-        // const response = await reportAPI.getReports();
-        // const reportsData = response.data?.data || [];
-        // const closedReports = reportsData.filter(report => report.status === 'closed');
-        // setClosedReportsCount(closedReports.length);
+        const response = await counselingAPI.countCounglings();
+        const reportsData = response.data?.data || [];
+        const closedReports = reportsData.filter(
+          (counseling) => counseling.status === "closed"
+        );
+        setClosedReportsCount(closedReports.length);
       } catch (error) {
         console.error("Error fetching reports:", error);
         setClosedReportsCount(0);
