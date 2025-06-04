@@ -276,9 +276,9 @@ const Register = () => {
                           name="password"
                           onChange={handleChanges}
                           type={showPassword ? "text" : "password"}
-                          // minLength={8}
-                          // pattern="^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$"
-                          // title="Password minimal 8 karakter, harus mengandung huruf kapital, angka, dan karakter spesial"
+                          minLength={8}
+                          pattern="^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$"
+                          title="Password minimal 8 karakter, harus mengandung huruf kapital, angka, dan karakter spesial"
                           placeholder="Masukkan password"
                           className="block w-full border-0 p-0 focus:ring-0 focus:outline-none text-gray-800 placeholder:text-xs"
                         />
