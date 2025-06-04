@@ -16,6 +16,11 @@ import ChatWidget from "../components/ChatWidget";
 import counselingAPI from "../api/counseling";
 
 const Home = () => {
+  // Page title
+  useEffect(() => {
+    document.title = "Pengaduan Aman - Cegah Kekerasan";
+  });
+
   const [closedReportsCount, setClosedReportsCount] = useState(0);
   const controls = useAnimation();
   const statsSectionRef = useRef(null);
