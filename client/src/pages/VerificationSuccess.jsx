@@ -1,6 +1,7 @@
 // VerificationSuccess.tsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import authAPI from "../api/auth";
 
 const VerificationSuccess = () => {
   const navigate = useNavigate();
@@ -20,9 +21,7 @@ const VerificationSuccess = () => {
       }
 
       try {
-        const response = await fetch(
-          `/api/auth/validate-success-token?token=${token}`
-        );
+        const response = await authAPI.validateToken(token);
         const data = await response.json();
 
         if (!response.ok || !data.valid) {

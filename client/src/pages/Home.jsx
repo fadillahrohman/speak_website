@@ -1,162 +1,150 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
-import { usePageLoading } from "../hooks/usePageLoading";
-import LoadingScreen from "../components/LoadingScreen";
+import React, { useEffect, useState, useRef } from "react";
+import { motion as Motion, useAnimation, useInView } from "framer-motion";
+import CountUp from "react-countup";
+import { Link } from "react-router-dom";
 import {
   ShieldUser,
   DatabaseZap,
   ClockArrowUp,
   MessageSquareDiff,
-  FileText,
   Bot,
+  FileText,
   ChevronRight,
+  Download,
 } from "lucide-react";
 import ChatWidget from "../components/ChatWidget";
 
+// import reportAPI from "../api/report";
+
 const Home = () => {
-  // Page title
+  const [closedReportsCount, setClosedReportsCount] = useState(0);
+  const controls = useAnimation();
+  const statsSectionRef = useRef(null);
+  const isInView = useInView(statsSectionRef, { once: true, amount: 0.5 });
+
+  // Fetch closed reports count
   useEffect(() => {
-    document.title = "Pengaduan Aman - Cegah Kekerasan";
-  }, []);
-
-  const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-
-  // Loading from hooks
-  const isLoading = usePageLoading("loginPage");
-
-  useEffect(() => {
-    const checkAuthStatus = async () => {
+    const fetchClosedReportsCount = async () => {
       try {
-        const response = await axios.get("/api/auth/verify", {
-          withCredentials: true,
-        });
+        // for testing
+        setClosedReportsCount(318);
 
-        if (response.data.authenticated) {
-          setUser(response.data.user);
-        } else {
-          setUser(null);
-        }
+        // if the user is logged in, because there is no endpoint to fetch status data without logging in
+        // const response = await reportAPI.getReports();
+        // const reportsData = response.data?.data || [];
+        // const closedReports = reportsData.filter(report => report.status === 'closed');
+        // setClosedReportsCount(closedReports.length);
       } catch (error) {
-        console.error("Server connection error:", error);
-        setUser(null);
+        console.error("Error fetching reports:", error);
+        setClosedReportsCount(0);
       }
     };
 
-    checkAuthStatus();
+    fetchClosedReportsCount();
   }, []);
 
-  const handleReportClick = (e) => {
-    if (!user) {
-      e.preventDefault();
-      navigate("/login");
+  // Trigger animation when in view
+  useEffect(() => {
+    if (isInView && closedReportsCount > 0) {
+      controls.start("visible");
     }
-  };
+  }, [isInView, closedReportsCount, controls]);
 
   return (
     <>
-      {isLoading ? (
-        <LoadingScreen />
-      ) : (
-        <div className="flex flex-col items-center bg-white min-h-screen">
-          {/* Hero Section */}
-          <ChatWidget />
-          <section className="p-6">
-            <div className="w-full max-w-8xl bg-pink-200 rounded-lg overflow-hidden mb-8">
-              <div className="flex flex-col lg:flex-row">
-                {/* Left Content */}
-                <div className="bg-white p-6 md:p-8 lg:w-1/2 rounded-lg m-4 md:m-10">
-                  <h2 className="text-pink-600 font-bold text-xs sm:text-sm md:text-base mb-1 md:mb-2">
-                    STOP KEKERASAN SEKSUAL
-                  </h2>
-                  <h1 className="text-2xl sm:text-2xl md:text-4xl lg:text-5xl xl:text-7xl font-bold mb-2 md:mb-4">
-                    Bersama, kita bisa menghentikan kekerasan seksual.
-                  </h1>
-                  <p className="text-gray-600 text-xs sm:text-sm md:text-base mb-4 md:mb-6 lg:mb-8 max-w-xl">
-                    Mari bergerak untuk kebaikan lingkungan kita yang aman dari
-                    kekerasan.
-                  </p>
-                  <Link
-                    to={user ? "/report" : "/login"}
-                    onClick={() => (user ? null : navigate("/login"))}
-                  >
-                    <button className="bg-[#AC1754] text-white px-2 py-2 sm:px-2 sm:py-2 md:px-3 md:py-3 lg:px-5 lg:py-4 rounded-full text-xs sm:text-sm md:text-base flex items-center hover:bg-pink-700 transition-colors cursor-pointer">
-                      Mulai Membuat Laporan
-                      <span className="bg-white rounded-full p-0.5 sm:p-1 md:p-1.5 ml-2 md:ml-3">
-                        <ChevronRight
-                          size={12}
-                          className="text-pink-600 sm:w-4 sm:h-4 md:w-5 md:h-5"
-                        />
-                      </span>
-                    </button>
-                  </Link>
-                </div>
-                {/* Right Content */}
-                <div className="lg:w-1/2 flex items-center justify-center p-6">
-                  <div className="relative">
-                    <img
-                      src="/images/home-illustration.png"
-                      alt="No Sexual Harassment Illustration"
-                      className="w-full h-auto max-w-md"
-                    />
-                  </div>
+      <div className="flex flex-col items-center bg-white">
+        <ChatWidget />
+        {/* Hero Section */}
+        <section className="p-6">
+          <div className="w-full max-w-8xl bg-pink-200 rounded-lg overflow-hidden mb-8">
+            <div className="flex flex-col lg:flex-row">
+              {/* Left Content */}
+              <div className="bg-white p-6 md:p-8 lg:w-1/2 rounded-lg m-4 md:m-10">
+                <h2 className="text-pink-600 font-bold text-xs sm:text-sm md:text-base mb-1 md:mb-2">
+                  STOP KEKERASAN SEKSUAL
+                </h2>
+                <h1 className="text-2xl sm:text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-2 md:mb-4">
+                  Bersama, kita bisa menghentikan kekerasan seksual.
+                </h1>
+                <p className="text-gray-600 text-xs sm:text-sm md:text-base mb-4 md:mb-6 lg:mb-8 max-w-xl">
+                  Mari bergerak untuk kebaikan lingkungan kita yang aman dari
+                  kekerasan.
+                </p>
+                <Link to={"/create-report"}>
+                  <button className="bg-[#AC1754] text-white px-2 py-2 sm:px-2 sm:py-2 md:px-3 md:py-3 lg:px-5 lg:py-4 rounded-full text-xs sm:text-sm md:text-base flex items-center hover:bg-pink-700 transition-colors cursor-pointer">
+                    Mulai Membuat Laporan
+                    <span className="bg-white rounded-full p-0.5 sm:p-1 md:p-1.5 ml-2 md:ml-3">
+                      <ChevronRight
+                        size={12}
+                        className="text-pink-600 sm:w-4 sm:h-4 md:w-5 md:h-5"
+                      />
+                    </span>
+                  </button>
+                </Link>
+              </div>
+              {/* Right Content */}
+              <div className="lg:w-1/2 flex items-center justify-center p-6">
+                <div className="relative">
+                  <img
+                    src="/images/home-illustration.png"
+                    alt="No Sexual Harassment Illustration"
+                    className="w-full h-auto max-w-md"
+                  />
                 </div>
               </div>
             </div>
-          </section>
-          {/* Services Section */}
-          <section className="flex flex-col md:flex-row justify-between gap-4 px-4 pb-4">
-            <div className="bg-white border border-gray-200 lg:w-80 rounded-lg p-4 flex items-center gap-3">
-              <div className="bg-pink-100 p-2 rounded-full">
-                <ShieldUser size={35} className="text-[#AC1754]" />
-              </div>
-              <div>
-                <h3 className="font-bold text-md">Aman dan Terjamin</h3>
-                <p className="text-xs text-gray-600">
-                  Kerahasiaan data terlindungi
-                </p>
-              </div>
-            </div>
-            <div className="bg-white border border-gray-200 lg:w-80 rounded-lg p-4 flex items-center gap-3">
-              <div className="bg-pink-100 p-2 rounded-full">
-                <DatabaseZap size={30} className="text-[#AC1754]" />
-              </div>
-              <div>
-                <h3 className="font-bold text-md">Mudah dan Cepat</h3>
-                <p className="text-xs text-gray-600">
-                  Proses pelaporan yang efisien
-                </p>
-              </div>
-            </div>
-            <div className="bg-white border border-gray-200 lg:w-80 rounded-lg p-4 flex items-center gap-3">
-              <div className="bg-pink-100 p-2 rounded-full">
-                <ClockArrowUp size={30} className="text-[#AC1754]" />
-              </div>
-              <div>
-                <h3 className="font-bold text-md">Dukungan 24/7</h3>
-                <p className="text-xs text-gray-600">
-                  Pendampingan profesional tersedia
-                </p>
-              </div>
-            </div>
-          </section>
-          {/* Call to Action */}
-          <div className="w-full max-w-4xl text-center my-6">
-            <h2 className="text-3xl lg:text-4xl font-kaushan mb-1">
-              Saling Jaga
-            </h2>
-            <h2 className="text-3xl lg:text-5xl font-kaushan mb-8">
-              Saling Peduli
-            </h2>
           </div>
-          {/* Features Section */}
-          <section className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        </section>
+        {/* Services Section */}
+        <section className="flex flex-col md:flex-row justify-between gap-4 px-4 pb-4">
+          <div className="bg-white border border-gray-200 lg:w-80 rounded-lg p-4 flex items-center gap-3">
+            <div className="bg-pink-100 p-2 rounded-full">
+              <ShieldUser size={35} className="text-[#AC1754]" />
+            </div>
+            <div>
+              <h3 className="font-bold text-md">Aman dan Terjamin</h3>
+              <p className="text-xs text-gray-600">
+                Kerahasiaan data terlindungi
+              </p>
+            </div>
+          </div>
+          <div className="bg-white border border-gray-200 lg:w-80 rounded-lg p-4 flex items-center gap-3">
+            <div className="bg-pink-100 p-2 rounded-full">
+              <DatabaseZap size={30} className="text-[#AC1754]" />
+            </div>
+            <div>
+              <h3 className="font-bold text-md">Mudah dan Cepat</h3>
+              <p className="text-xs text-gray-600">
+                Proses pelaporan yang efisien
+              </p>
+            </div>
+          </div>
+          <div className="bg-white border border-gray-200 lg:w-80 rounded-lg p-4 flex items-center gap-3">
+            <div className="bg-pink-100 p-2 rounded-full">
+              <ClockArrowUp size={30} className="text-[#AC1754]" />
+            </div>
+            <div>
+              <h3 className="font-bold text-md">Dukungan 24/7</h3>
+              <p className="text-xs text-gray-600">
+                Pendampingan profesional tersedia
+              </p>
+            </div>
+          </div>
+        </section>
+        {/* Call to Action */}
+        <div className="w-full max-w-4xl text-center my-6">
+          <h2 className="text-3xl lg:text-4xl font-kaushan mb-1">
+            Saling Jaga
+          </h2>
+          <h2 className="text-3xl lg:text-5xl font-kaushan mb-8">
+            Saling Peduli
+          </h2>
+        </div>
+        {/* Features Section */}
+        <section className="w-full px-6">
+          <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Card 1 */}
-            <Link
-              to={user ? "/report" : "/login"}
-              onClick={handleReportClick}
-            >
+            <Link to={"/create-report"}>
               <div className="bg-pink-200 hover:bg-pink-300 transition-colors rounded-lg overflow-hidden shadow-md relative">
                 <div className="p-6 h-56 flex items-center justify-center">
                   <img
@@ -203,7 +191,7 @@ const Home = () => {
                 </div>
               </div>
             </Link>
-         
+
             {/* Card 3 */}
             <Link to="/guide">
               <div className="bg-pink-200 hover:bg-pink-300 transition-colors rounded-lg overflow-hidden shadow-md relative">
@@ -228,151 +216,156 @@ const Home = () => {
                 </div>
               </div>
             </Link>
-          </section>
-          {/* Statistics Section*/}
-          <section className="pt-12 sm:pt-16 mb-10">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="max-w-4xl mx-auto text-center">
-                <h2 className="text-2xl font-extrabold text-gray-900 sm:text-4xl">
-                  <span className="bg-[#AC1754] p-1 rounded-lg text-white">
-                    Kepercayaan
-                  </span>{" "}
-                  yang dipilih oleh mereka yang membutuhkan perlindungan dan
-                  keadilan
-                </h2>
-                <p className="mt-3 text-sm lg:text-md text-gray-500 sm:mt-4">
-                  Kami berkomitmen untuk memberikan dukungan penuh, menjaga
-                  privasi, dan berharap keadilan tercapai.
-                </p>
-              </div>
-            </div>
-            <div className="mt-10 pb-12 bg-white sm:pb-16">
+          </div>
+        </section>
+        {/* Statistics Section*/}
+        <section ref={statsSectionRef} className="pt-12 sm:pt-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mt-5 pb-12 sm:pb-16">
               <div className="relative">
                 <div className="absolute inset-0 h-1/2" />
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                   <div className="max-w-4xl mx-auto">
-                    <dl className="rounded-lg bg-white shadow-lg sm:grid sm:grid-cols-2">
-                      <div className="flex flex-col border-b border-gray-100 p-6 text-center sm:border-0 sm:border-r">
-                        <dd className="order-1 text-5xl font-extrabold text-[#AC1754]">
-                          99+
-                        </dd>
-                        <dt className="order-2 mt-2 text-lg leading-6 font-medium text-gray-500">
-                          Pengguna
-                        </dt>
-                      </div>
-                      <div className="flex flex-col border-t border-b border-gray-100 p-6 text-center sm:border-0 sm:border-l">
-                        <dd className="order-1 text-5xl font-extrabold text-[#AC1754]">
-                          1000+
-                        </dd>
-                        <dt className="order-2 mt-2 text-lg leading-6 font-medium text-gray-500">
-                          Laporan Selesai
-                        </dt>
-                      </div>
-                    </dl>
+                    <div className="flex flex-col p-6 text-center">
+                      <Motion.h3
+                        className="order-1 text-5xl font-extrabold text-[#AC1754]"
+                        initial="hidden"
+                        animate={controls}
+                        variants={{
+                          hidden: { opacity: 0 },
+                          visible: { opacity: 1 },
+                        }}
+                        transition={{ duration: 0.5 }}
+                      >
+                        <CountUp
+                          start={0}
+                          end={closedReportsCount}
+                          duration={2}
+                          suffix="+"
+                          formattingFn={(value) => `${value.toLocaleString()}+`}
+                        />
+                      </Motion.h3>
+                      <Motion.span
+                        className="order-2 mt-2 text-lg leading-6 font-medium text-gray-500"
+                        initial={{ opacity: 0 }}
+                        animate={controls}
+                        variants={{
+                          hidden: { opacity: 0 },
+                          visible: { opacity: 1 },
+                        }}
+                        transition={{ delay: 0.5, duration: 0.5 }}
+                      >
+                        Laporan Selesai
+                      </Motion.span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </section>
-          {/* Testimoni Section */}
-          <section className="bg-pink-800">
-            <div className=" mx-auto md:grid md:grid-cols-2 md:px-6 lg:px-8">
-              <div className="py-12 px-4 sm:px-6 md:flex md:flex-col md:py-16 md:pl-0 md:pr-10 md:border-r md:border-pink-900 lg:pr-16">
-                <blockquote className="mt-6 md:flex-grow md:flex md:flex-col">
-                  <div className="relative text-lg font-medium text-white md:flex-grow">
-                    <svg
-                      className="absolute top-0 left-0 transform -translate-x-3 -translate-y-2 h-8 w-8 text-emerald-600"
-                      fill="currentColor"
-                      viewBox="0 0 32 32"
-                      aria-hidden="true"
-                    >
-                      <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z" />
-                    </svg>
-                    <p className="relative">
-                      Awalnya saya ragu untuk melapor, tapi tim pendamping
-                      sangat ramah dan suportif. Saya merasa lebih berani dan
-                      nggak segan untuk melapor jika melihat korban pelecehan
-                      lagi. Semoga semakin banyak orang yang sadar bahwa melapor
-                      adalah langkah penting untuk menghentikan kekerasan.
-                    </p>
-                  </div>
-                  <footer className="mt-8">
-                    <div className="flex items-start">
-                      <div className="flex-shrink-0 inline-flex rounded-full border-2 border-white">
-                        <img
-                          className="h-12 w-12 rounded-full"
-                          src="/images/icons/girl-icon.svg"
-                          alt="Girl Icon"
-                        />
+          </div>
+        </section>
+        {/* Testimoni Section */}
+        <section className="bg-pink-800 w-full">
+          <div className=" mx-auto md:grid md:grid-cols-2 md:px-6 lg:px-8">
+            <div className="py-12 px-4 sm:px-6 md:flex md:flex-col md:py-16 md:pl-0 md:pr-10 md:border-r md:border-pink-900 lg:pr-16">
+              <blockquote className="mt-6 md:flex-grow md:flex md:flex-col">
+                <div className="relative text-lg font-medium text-white md:flex-grow">
+                  <svg
+                    className="absolute top-0 left-0 transform -translate-x-3 -translate-y-2 h-8 w-8 text-emerald-600"
+                    fill="currentColor"
+                    viewBox="0 0 32 32"
+                    aria-hidden="true"
+                  >
+                    <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z" />
+                  </svg>
+                  <p className="relative">
+                    Awalnya saya ragu untu k melapor, tapi tim pendamping sangat
+                    ramah dan suportif. Saya merasa lebih berani dan nggak segan
+                    untuk melapor jika melihat korban pelecehan lagi. Semoga
+                    semakin banyak orang yang sadar bahwa melapor adalah langkah
+                    penting untuk menghentikan kekerasan.
+                  </p>
+                </div>
+                <div className="mt-8">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 inline-flex rounded-full border-2 border-white">
+                      <img
+                        className="h-12 w-12 rounded-full"
+                        src="/images/icons/girl-icon.svg"
+                        alt="Girl Icon"
+                      />
+                    </div>
+                    <div className="ml-4">
+                      <div className="text-base font-medium text-white">
+                        Ananda Salsa
                       </div>
-                      <div className="ml-4">
-                        <div className="text-base font-medium text-white">
-                          Ananda Salsa
-                        </div>
-                        <div className="text-base font-medium text-emerald-200">
-                          Mbak Yang Suka Laporin
-                        </div>
+                      <div className="text-base font-medium text-emerald-200">
+                        Mbak Yang Suka Laporin
                       </div>
                     </div>
-                  </footer>
-                </blockquote>
-              </div>
-              <div className="py-12 px-4 border-t-2 border-pink-900 sm:px-6 md:py-16 md:pr-0 md:pl-10 md:border-t-0 md:border-l lg:pl-16">
-                <blockquote className="mt-6 md:flex-grow md:flex md:flex-col">
-                  <div className="relative text-lg font-medium text-white md:flex-grow">
-                    <svg
-                      className="absolute top-0 left-0 transform -translate-x-3 -translate-y-2 h-8 w-8 text-indigo-600"
-                      fill="currentColor"
-                      viewBox="0 0 32 32"
-                    >
-                      <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z" />
-                    </svg>
-                    <p className="relative">
-                      Gue awalnya ragu buat ngelapor, soalnya korban biasanya
-                      takut identitasnya bakal tersebar. Tapi ternyata semuanya
-                      dijaga dengan baik—kerahasiaan bener-bener diperhatikan.
-                      Sekarang gue jadi percaya, dan semoga makin banyak yang
-                      berani speak up tanpa rasa takut.
-                    </p>
                   </div>
-                  <footer className="mt-8">
-                    <div className="flex items-start">
-                      <div className="flex-shrink-0 inline-flex rounded-full border-2 border-white">
-                        <img
-                          className="h-12 w-12 rounded-full"
-                          src="/images/icons/boy-icon.svg"
-                          alt="Boy Icon"
-                        />
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-base font-medium text-white">
-                          Iqro Negoro
-                        </div>
-                        <div className="text-base font-medium text-indigo-200">
-                          Mas-mas Gercep Ngelapor
-                        </div>
-                      </div>
-                    </div>
-                  </footer>
-                </blockquote>
-              </div>
+                </div>
+              </blockquote>
             </div>
-          </section>
-          {/* Mobile Demo Section */}
-          <section className="bg-[#AC1754] w-full p-none">
-            <div className="py-8 px-4 max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-              {/* Left Side: Text and Buttons */}
-              <div className="w-full md:w-1/2 space-y-4 text-white">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                  Cegah Kekerasan Mulai dari{" "}
-                  <span className="bg-gradient-to-tl from-pink-500 via-slate-50 to-pink-600 bg-clip-text text-transparent">
-                    Smartphone
-                  </span>
-                  -mu!
-                </h1>
-                <p className="text-sm sm:text-base md:text-lg text-gray-100">
-                  Gampang Diakses, Maksimal Dampaknya
-                </p>
+            <div className="py-12 px-4 border-t-2 border-pink-900 sm:px-6 md:py-16 md:pr-0 md:pl-10 md:border-t-0 md:border-l lg:pl-16">
+              <blockquote className="mt-6 md:flex-grow md:flex md:flex-col">
+                <div className="relative text-lg font-medium text-white md:flex-grow">
+                  <svg
+                    className="absolute top-0 left-0 transform -translate-x-3 -translate-y-2 h-8 w-8 text-indigo-600"
+                    fill="currentColor"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z" />
+                  </svg>
+                  <p className="relative">
+                    Gue awalnya ragu buat ngelapor, soalnya korban biasanya
+                    takut identitasnya bakal tersebar. Tapi ternyata semuanya
+                    dijaga dengan baik—kerahasiaan bener-bener diperhatikan.
+                    Sekarang gue jadi percaya, dan semoga makin banyak yang
+                    berani speak up tanpa rasa takut.
+                  </p>
+                </div>
+                <div className="mt-8">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 inline-flex rounded-full border-2 border-white">
+                      <img
+                        className="h-12 w-12 rounded-full"
+                        src="/images/icons/boy-icon.svg"
+                        alt="Boy Icon"
+                      />
+                    </div>
+                    <div className="ml-4">
+                      <div className="text-base font-medium text-white">
+                        Iqro Negoro
+                      </div>
+                      <div className="text-base font-medium text-indigo-200">
+                        Mas-mas Gercep Ngelapor
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </blockquote>
+            </div>
+          </div>
+        </section>
+        {/* Mobile Demo Section */}
+        <section className="bg-[#AC1754] w-full">
+          <div className="py-8 px-4 max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+            {/* Left Side: Text and Buttons */}
+            <div className="w-full md:w-1/2 space-y-4 text-white">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+                Cegah Kekerasan Mulai dari{" "}
+                <span className="bg-gradient-to-tl from-pink-500 via-slate-50 to-pink-600 bg-clip-text text-transparent">
+                  Smartphone
+                </span>
+                -mu!
+              </h1>
+              <p className="text-sm sm:text-base md:text-lg text-gray-100">
+                Gampang Diakses, Maksimal Dampaknya
+              </p>
+              {/* Button More */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                {" "}
                 <Link to="/" target="_blank">
                   <button className="overflow-hidden relative w-46 p-2 h-12 bg-black text-white border-none rounded-md text-xl font-bold cursor-pointer z-10 group">
                     Selengkapnya
@@ -384,17 +377,29 @@ const Home = () => {
                     </span>
                   </button>
                 </Link>
-              </div>
-              {/* Right Side: Mobile Demo */}
-              <div className="w-full md:w-1/2">
-                <div className="flex items-center justify-center h-ful">
-                  <img src="/images/mobile-demo.svg" alt="" />
-                </div>
+                {/* Button Download */}
+                <Link to="/">
+                  <button className="relative w-46 h-12 px-8 py-2 overflow-hidden rounded-md bg-black text-white text-xl font-bold hover:bg-pink-400 cursor-pointer z-10 group">
+                    <span className="absolute top-0 right-0 px-5 py-1 text-xs tracking-wider text-center uppercase whitespace-no-wrap origin-bottom-left transform rotate-45 -translate-y-full translate-x-1/3 bg-[#f3438c]">
+                      Try
+                    </span>
+                    <span className="relative flex items-center gap-2">
+                      <span>Download</span>
+                      <Download className="w-4 h-4 transition-transform duration-300 ease-out group-hover:translate-y-1" />
+                    </span>
+                  </button>
+                </Link>
               </div>
             </div>
-          </section>
-        </div>
-      )}
+            {/* Right Side: Mobile Demo */}
+            <div className="w-full md:w-1/2">
+              <div className="flex items-center justify-center h-full">
+                <img src="/images/mobile-demo.svg" alt="" />
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
     </>
   );
 };

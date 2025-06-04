@@ -4,7 +4,7 @@ const Loading = ({ isFullScreen = true }) => {
   return (
     <div
       className={`flex flex-col items-center justify-center ${
-        isFullScreen ? "fixed inset-0 bg-transparent" : ""
+        isFullScreen ? "fixed inset-0 bg-white z-10" : ""
       }`}
     >
       {/* Spinner animation */}

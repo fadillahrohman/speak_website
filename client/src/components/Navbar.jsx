@@ -1,72 +1,53 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate, Link } from "react-router-dom";
-import axios from "axios";
-import RoundedButton from "./RoundedButton";
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { TbMenu } from "react-icons/tb";
 import { IoCloseOutline } from "react-icons/io5";
 import { HiOutlineLogout } from "react-icons/hi";
-import { FaUserCircle } from "react-icons/fa";
+import { FaChevronDown } from "react-icons/fa";
+import { useAuth } from "../contexts/AuthContext";
+import RoundedButton from "./RoundedButton";
 
 const Navbar = () => {
-  const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
 
-  // Add location.pathname as a dependency to trigger auth check whenever the route changes.
-  useEffect(() => {
-    const checkAuthStatus = async () => {
-      try {
-        const response = await axios.get("/api/auth/verify", {
-          withCredentials: true,
-        });
+  const { user, isAuthenticated, checkingAuth, logout } = useAuth();
 
-        // There will be no error, always status 200
-        if (response.data.authenticated) {
-          setUser(response.data.user);
-        } else {
-          setUser(null);
-        }
-      } catch (error) {
-        // This will only be executed if there is a problem connecting to the server.
-        console.error("Server connection error:", error);
-        setUser(null);
-      }
-    };
+  // Don't render anything during auth checking
+  if (checkingAuth) {
+    return (
+      <nav className="sticky top-0 z-30 flex justify-between items-center p-4 bg-white w-full">
+        <Link to="/">
+          <img
+            src="/images/speak-logo.png"
+            className="w-[114px] h-[46px]"
+            alt="Speak Logo"
+          />
+        </Link>
+      </nav>
+    );
+  }
+  const getUserAvatar = (user) => {
+    const initials = (user?.name || user?.username || "U")
+      .split(" ")
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase()
+      .substring(0, 2);
 
-    checkAuthStatus();
-  }, [location.pathname]); // Memicu pemeriksaan setiap kali route berubah
+    return `https://ui-avatars.com/api/?name=${initials}&background=AC1754&color=fff&size=128&rounded=true&bold=true`;
+  };
 
   const handleLogout = async () => {
-    try {
-      // Call the logout endpoint to delete cookies on the server
-      await axios.post(
-        "/api/auth/logout",
-        {},
-        {
-          withCredentials: true,
-        }
-      );
-
-      // Set user to null
-      setUser(null);
-      navigate("/login");
-    } catch (error) {
-      console.error("Logout error:", error);
-      // Still redirect to login even if error
-      navigate("/login");
-    }
+    await logout();
+    navigate("/login");
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const closeSidebar = () => setIsSidebarOpen(false);
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
-  const closeSidebar = () => {
-    setIsSidebarOpen(false);
-  };
-
-  // Custom wrapped buttons that close sidebar when clicked
   const SidebarRoundedButton = (props) => (
     <div onClick={closeSidebar}>
       <RoundedButton
@@ -80,10 +61,30 @@ const Navbar = () => {
     </div>
   );
 
+  const optionsMenu = [
+    ...(!user?.role || user?.role?.toLowerCase() === "user"
+      ? [
+          {
+            title: "Buat Laporan",
+            description:
+              "Mulai dari sini, langkah kecil untuk keberanian besar.",
+            icon: "/images/icons/option-report.svg",
+            link: "/create-report",
+          },
+        ]
+      : []),
+    {
+      title: "Semua Laporan",
+      description: "Lihat laporan untuk meninjau langkah yang sudah dilakukan.",
+      icon: "/images/icons/option-myreport.svg",
+      link: "/reports",
+    },
+  ];
+
   return (
     <nav className="sticky top-0 z-30 flex justify-between items-center p-4 bg-white w-full">
-      {/* Logo */}
-      <div className="flex">
+      {/* Logo and Dropdown */}
+      <div className="flex items-center">
         <Link to="/" className="cursor-pointer">
           <img
             src="/images/speak-logo.png"
@@ -91,35 +92,93 @@ const Navbar = () => {
             alt="Speak Logo"
           />
         </Link>
+
+        {/* Desktop Dropdown */}
+        {isAuthenticated && (
+          <div className="hidden md:block ml-8 relative dropdown-container">
+            <button
+              onClick={toggleDropdown}
+              className="flex items-center gap-2 text-gray-700 hover:text-[#AC1754] transition-colors dropdown-trigger cursor-pointer"
+            >
+              <div className="flex items-center gap-2">
+                <img
+                  src={getUserAvatar(user)}
+                  alt="User Avatar"
+                  className="w-8 h-8 rounded-full"
+                />
+                <span className="font-medium text-gray-700">
+                  {user?.name || user?.username || "User"}
+                </span>
+              </div>
+              <FaChevronDown
+                className={`transition-transform cursor-pointer ${
+                  isDropdownOpen ? "transform rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {isDropdownOpen && (
+              <div
+                className={`absolute left-0 mt-2 ${
+                  optionsMenu.length === 1 ? "w-[350px]" : "w-[700px]"
+                } bg-white rounded-lg shadow-xl border border-gray-200 z-50`}
+              >
+                <div className="p-4">
+                  <div
+                    className={`grid ${
+                      optionsMenu.length === 1 ? "grid-cols-1" : "grid-cols-2"
+                    } gap-4`}
+                  >
+                    {optionsMenu.map((item, index) => (
+                      <Link
+                        to={item.link}
+                        key={index}
+                        onClick={() => setIsDropdownOpen(false)}
+                        className="block"
+                      >
+                        <div className="p-3 bg-gray-50 border border-gray-100 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors flex items-start gap-3">
+                          <img
+                            src={item.icon}
+                            alt={item.title}
+                            className="w-16 h-16 object-contain"
+                          />
+                          <div>
+                            <h4 className="font-medium text-md text-gray-900">
+                              {item.title}
+                            </h4>
+                            <p className="text-sm text-gray-500 mt-1">
+                              {item.description}
+                            </p>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
-      {/* Menu for Mobile */}
+      {/* Mobile Menu Button */}
       <div className="md:hidden">
         <button onClick={toggleSidebar} className="p-2 focus:outline-none">
           <TbMenu className="w-8 h-8 text-black" />
         </button>
       </div>
+
       {/* Desktop Navigation */}
       <div className="hidden md:flex items-center space-x-4">
-        {user ? (
-          // Show username and logout button when user is logged in
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <FaUserCircle className="text-gray-700" size={25} />
-              <span className="font-medium text-gray-700">
-                {user.name || user.username || "User"}
-              </span>
-            </div>
-            <RoundedButton
-              typeButton="button"
-              onClick={handleLogout}
-              className="bg-[#AC1754] text-white hover:bg-[#A4144F] flex items-center gap-1"
-            >
-              <HiOutlineLogout className="w-5 h-5" />
-              Logout
-            </RoundedButton>
-          </div>
+        {isAuthenticated ? (
+          <RoundedButton
+            typeButton="button"
+            onClick={handleLogout}
+            className="bg-[#AC1754] text-white hover:bg-[#A4144F] flex items-center gap-1"
+          >
+            <HiOutlineLogout className="w-5 h-5" />
+            Logout
+          </RoundedButton>
         ) : (
-          // Show login and register buttons when user is not logged in
           <>
             <RoundedButton
               typeButton="button"
@@ -138,6 +197,7 @@ const Navbar = () => {
           </>
         )}
       </div>
+
       {/* Mobile Sidebar */}
       <div
         className={`fixed top-0 right-0 h-full w-64 bg-white shadow-lg transform ${
@@ -145,24 +205,57 @@ const Navbar = () => {
         } transition-transform duration-300 ease-in-out z-50 md:hidden`}
       >
         <div className="p-4">
-          {/* Close Button */}
           <button
             onClick={toggleSidebar}
             className="float-right p-2 focus:outline-none"
           >
             <IoCloseOutline className="w-8 h-8 text-black" />
           </button>
-          {/* Sidebar Content with buttons that close sidebar when clicked */}
+
           <div className="mt-12 flex flex-col space-y-4">
-            {user ? (
-              // Show username and logout button when user is logged in
+            {isAuthenticated ? (
               <>
-                <div className="flex flex-col items-center mb-4">
-                  <FaUserCircle className="text-gray-700 mb-2" size={40} />
-                  <span className="font-medium text-gray-700 text-lg">
-                    {user.name || user.username || "User"}
+                {/* User Info - Mobile */}
+                <div className="flex items-center gap-3 p-3 bg-gray-50 border border-gray-100 rounded-lg">
+                  <img
+                    src={getUserAvatar(user)}
+                    alt="User Avatar"
+                    className="w-10 h-10 rounded-full"
+                  />
+                  <span className="font-medium text-sm text-gray-700">
+                    {user?.name || user?.username || "User"}
                   </span>
                 </div>
+
+                {/* Menu Items - Mobile */}
+                <div className="space-y-3 mt-4">
+                  {optionsMenu.map((item, index) => (
+                    <Link
+                      to={item.link}
+                      key={index}
+                      onClick={closeSidebar}
+                      className="block p-3 bg-gray-50 border border-gray-100 hover:bg-gray-100 rounded-lg"
+                    >
+                      <div className="flex items-start gap-3">
+                        <img
+                          src={item.icon}
+                          alt={item.title}
+                          className="w-12 h-12 object-contain"
+                        />
+                        <div>
+                          <h4 className="font-medium text-gray-900">
+                            {item.title}
+                          </h4>
+                          <p className="text-sm text-gray-500 mt-1">
+                            {item.description}
+                          </p>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+
+                {/* Logout Button - Mobile */}
                 <SidebarRoundedButton
                   typeButton="button"
                   onClick={handleLogout}
@@ -173,7 +266,6 @@ const Navbar = () => {
                 </SidebarRoundedButton>
               </>
             ) : (
-              // Show login and register buttons when user is not logged in
               <>
                 <SidebarRoundedButton
                   typeButton="button"
@@ -194,7 +286,6 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      {/* Overlay when sidebar is open */}
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black opacity-50 z-40 md:hidden"

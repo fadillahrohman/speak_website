@@ -1,13 +1,11 @@
 import React, { useEffect } from "react";
-import { usePageLoading } from "../hooks/usePageLoading";
+
 import { PiEye, PiEyeClosed } from "react-icons/pi";
 import RoundedButton from "../components/RoundedButton";
 import LoadingScreen from "../components/LoadingScreen";
 
 const ForgotPassword = () => {
-  // Loading from hooks
-  const isLoading = usePageLoading("forgotPasswordPage");
-
+  
   // Page Title
   useEffect(() => {
     document.title = "Lupa Password - SPEAK";
@@ -15,10 +13,7 @@ const ForgotPassword = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingScreen />
-      ) : (
-        <div className="bg-[#AC1754] flex flex-col min-h-screen">
+      <div className="bg-[#AC1754] flex flex-col min-h-screen">
           <div className="flex flex-col md:flex-row mx-auto my-auto bg-white rounded-none md:rounded-lg overflow-hidden w-full max-w-4xl m-4 shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
             {/* Left Section - Illustration */}
             <div className="w-full md:w-3/5 bg-pink-200 p-6 pb-11 flex items-center justify-center">
@@ -80,7 +75,7 @@ const ForgotPassword = () => {
             </div>
           </div>
         </div>
-      )}
+
     </>
   );
 };

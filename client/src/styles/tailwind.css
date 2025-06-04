@@ -1,7 +1,6 @@
 /* GOOGLE FONTS */
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Kaushan+Script&display=swap');
 
-
 @import "tailwindcss";
 @theme { 
     --font-inter: "Inter", sans-serif;
@@ -9,7 +8,7 @@
     --text-magenta-red : #AC1754;
 }
 
-@keyframes fade-in-down {
+@keyframes fade-in-down { 
     0% {
       opacity: 0;
       transform: translateY(-10px);
