@@ -21,7 +21,7 @@ const Home = () => {
     document.title = "Pengaduan Aman - Cegah Kekerasan";
   });
 
-  const [closedReportsCount, setClosedReportsCount] = useState(0);
+  const [closedCounselingsCount, setClosedCounselingsCount] = useState(0);
   const controls = useAnimation();
   const statsSectionRef = useRef(null);
   const isInView = useInView(statsSectionRef, { once: true, amount: 0.5 });
@@ -30,14 +30,11 @@ const Home = () => {
   useEffect(() => {
     const fetchClosedReportsCount = async () => {
       try {
-        // for testing
-        // setClosedReportsCount(318);
-
         const response = await counselingAPI.countCounglings();
-        setClosedReportsCount(response.data.total || 0);
+        setClosedCounselingsCount(response.data.data.total);
       } catch (error) {
         console.error("Error fetching reports:", error);
-        setClosedReportsCount(0);
+        setClosedCounselingsCount(0);
       }
     };
 
@@ -46,10 +43,10 @@ const Home = () => {
 
   // Trigger animation when in view
   useEffect(() => {
-    if (isInView && closedReportsCount > 0) {
+    if (isInView && closedCounselingsCount > 0) {
       controls.start("visible");
     }
-  }, [isInView, closedReportsCount, controls]);
+  }, [isInView, closedCounselingsCount, controls]);
 
   return (
     <>
@@ -145,7 +142,7 @@ const Home = () => {
         <section className="w-full px-6">
           <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Card 1 */}
-            <Link to={"/create-report"}>
+            <Link to="https://drive.google.com/file/d/1oYyjZf3qCuJrXQ1dUYuxh5DOpzLkQl9Y/view?usp=sharing">
               <div className="bg-pink-200 hover:bg-pink-300 transition-colors rounded-lg overflow-hidden shadow-md relative">
                 <div className="p-6 h-56 flex items-center justify-center">
                   <img
@@ -169,7 +166,7 @@ const Home = () => {
               </div>
             </Link>
             {/* Card 2 */}
-            <Link to="/serena-bot">
+            <Link to="https://drive.google.com/file/d/1TRnvDJOQ3tyhkImYKWIylywyU0L14Z8i/view?usp=sharing">
               <div className="bg-pink-200 hover:bg-pink-300 transition-colors rounded-lg overflow-hidden shadow-md relative cursor-pointer">
                 <div className="p-6 h-56 flex items-center justify-center">
                   <img
@@ -194,7 +191,7 @@ const Home = () => {
             </Link>
 
             {/* Card 3 */}
-            <Link to="/guide">
+            <Link to="https://drive.google.com/file/d/14E4N7opQWzycts-tGbFEylaEgTZ562uz/view?usp=sharing">
               <div className="bg-pink-200 hover:bg-pink-300 transition-colors rounded-lg overflow-hidden shadow-md relative">
                 <div className="p-6 h-56 flex items-center justify-center">
                   <img
@@ -240,9 +237,8 @@ const Home = () => {
                       >
                         <CountUp
                           start={0}
-                          end={closedReportsCount}
+                          end={closedCounselingsCount}
                           duration={2}
-                          suffix="+"
                           formattingFn={(value) => `${value.toLocaleString()}+`}
                         />
                       </Motion.h3>

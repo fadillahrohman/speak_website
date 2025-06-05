@@ -405,7 +405,7 @@ const CreateReport = () => {
               ></textarea>
             </div>
             <div className="flex flex-col md:flex-row justify-between w-full px-3 gap-3">
-              <Link to="#">
+              <Link to="https://drive.google.com/file/d/1oYyjZf3qCuJrXQ1dUYuxh5DOpzLkQl9Y/view?usp=sharing">
                 <button
                   type="button"
                   className="w-full md:w-auto bg-[#AC1754] hover:bg-[#A4144F] text-white text-xs p-2 rounded flex items-center justify-center cursor-pointer"
