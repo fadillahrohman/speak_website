@@ -4,7 +4,6 @@ import RoundedButton from "../components/RoundedButton";
 import LoadingScreen from "../components/LoadingScreen";
 import ErrorToast from "../components/Toast/ErrorToast";
 import SuccessToast from "../components/Toast/SuccessToast";
-
 import authAPI from "../api/auth";
 
 function ResendEmail() {
@@ -70,7 +69,6 @@ function ResendEmail() {
       }
     } catch (error) {
       console.error("Error:", error);
-      // Menggunakan error message dari response jika ada
       const errorMsg =
         error.response?.data?.message ||
         "Terjadi kesalahan saat mengirim email verifikasi";

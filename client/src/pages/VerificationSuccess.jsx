@@ -69,22 +69,22 @@ const VerificationSuccess = () => {
       </div>
     );
   }
-  if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="p-8 bg-white rounded shadow-md text-center">
-          <div className="text-red-500 text-5xl mb-4">⚠️</div>
-          <h1 className="text-2xl font-bold text-red-600 mb-2">
-            Akses Ditolak
-          </h1>
-          <p className="mb-4">{error}</p>
-          <p className="text-sm text-gray-500">
-            Anda akan dialihkan ke halaman login...
-          </p>
-        </div>
-      </div>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <div className="flex items-center justify-center min-h-screen bg-gray-100">
+  //       <div className="p-8 bg-white rounded shadow-md text-center">
+  //         <div className="text-red-500 text-5xl mb-4">⚠️</div>
+  //         <h1 className="text-2xl font-bold text-red-600 mb-2">
+  //           Akses Ditolak
+  //         </h1>
+  //         <p className="mb-4">{error}</p>
+  //         <p className="text-sm text-gray-500">
+  //           Anda akan dialihkan ke halaman login...
+  //         </p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
   return (
     <div className="relative w-full min-h-screen overflow-hidden">
       {/* Image for desktop */}
