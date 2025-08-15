@@ -1,28 +1,28 @@
-import axios from "axios";
+import apiClient from "./apiClient";
 
 const authAPI = {
   login: async (credentials) => {
-    return await axios.post("/api/auth/login", credentials);
+    return await apiClient.post("/auth/login", credentials);
   },
 
   verify: async () => {
-    return await axios.get("/api/auth/verify", {
+    return await apiClient.get("/auth/verify", {
       headers: { "Content-Type": "application/json" },
       withCredentials: true,
     });
   },
 
   logout: async (credentials) => {
-    return await axios.post("/api/auth/logout", credentials);
+    return await apiClient.post("/auth/logout", credentials);
   },
 
   register: async (credentials) => {
-    return await axios.post("/api/auth/register", credentials);
+    return await apiClient.post("/auth/register", credentials);
   },
 
   resendVerification: async (email) => {
-    return await axios.post(
-      "/api/auth/resend-verification",
+    return await apiClient.post(
+      "/auth/resend-verification",
       { email },
       {
         headers: { "Content-Type": "application/json" },
@@ -32,7 +32,7 @@ const authAPI = {
   },
 
   validateToken: async (token) => {
-    return await axios.get("/api/auth/validate-success-token", {
+    return await apiClient.get("/auth/validate-success-token", {
       params: { token },
       headers: { "Content-Type": "application/json" },
       withCredentials: true,

@@ -1,16 +1,16 @@
-import axios from "axios";
+import apiClient from "./apiClient";
 
 const counselingAPI = {
   getCounselings: async () => {
-    return await axios.get("/api/counselings");
+    return await apiClient.get("/counselings");
   },
 
   countCounglings: async () => {
-    return await axios.get("/api/counselings/count");
+    return await apiClient.get("/counselings/count");
   },
 
   createCounseling: async (formData) => {
-    return await axios.post("/api/counselings", formData, {
+    return await apiClient.post("/counselings", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -18,15 +18,15 @@ const counselingAPI = {
   },
 
   getCounselors: async () => {
-    return await axios.get("/api/counselings/users");
+    return await apiClient.get("/counselings/users");
   },
 
   getCounselingDetail: async (reportCode) => {
-    return await axios.get(`/api/counselings/${reportCode}`);
+    return await apiClient.get(`/counselings/${reportCode}`);
   },
 
   updateCounseling: async (reportCode, formData) => {
-    return await axios.put(`/api/counselings/${reportCode}`, formData, {
+    return await apiClient.put(`/counselings/${reportCode}`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -34,7 +34,7 @@ const counselingAPI = {
   },
 
   updateCounselingStatus: async (reportCode, status) => {
-    return await axios.patch(`/api/counselings/${reportCode}/status`, {
+    return await apiClient.patch(`/counselings/${reportCode}/status`, {
       status,
     });
   },
