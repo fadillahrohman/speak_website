@@ -7,6 +7,7 @@ import {
   SendHorizontal,
   ListRestart,
 } from "lucide-react";
+import chatBot from "../api/chatbot";
 
 // Save encryption function using XOR with key
 const encryptData = (data, secretKey) => {
@@ -138,22 +139,14 @@ const ChatWidget = () => {
     setIsLoading(true);
 
     try {
-      const context = messages.map((msg) => msg.text);
-      const response = await fetch("/api/chats", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: inputMessage,
-          context: context,
-        }),
-      });
-
-      const data = await response.json();
+      const data = await chatBot.chat(inputMessage, messages);
+      console.log("Response", data);
 
       // Add bot response to chat
-      setMessages([...newMessages, { sender: "bot", text: data.data.message }]);
+      setMessages([
+        ...newMessages,
+        { sender: "bot", text: data?.message || "Tidak ada jawaban." },
+      ]);
     } catch (error) {
       console.error("Error sending message:", error);
       setMessages([
