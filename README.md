@@ -1,4 +1,2 @@
 # SPEAK
 SPEAK WEBSITE - SEXUAL PROTECTION AWARENESS KEEPER
-
-I am a Fadillah Rohman as Frontend Developer
